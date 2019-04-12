@@ -1,6 +1,8 @@
 package entity;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import java.util.Map;
 
 public final class ImmutableSRVoter {
@@ -9,20 +11,26 @@ public final class ImmutableSRVoter {
   private Long totalVotes;
   private Map<String, Long> voteMap;
   private final String srAddress;
+  private final String timestamp;
 
-  public ImmutableSRVoter(String srAddress, Map<String, Long> voteMap) {
+  public ImmutableSRVoter(String srAddress, Map<String, Long> voteMap, String timestamp) {
     this.srAddress = srAddress;
     this.voteMap = voteMap;
+    this.timestamp = timestamp;
     this.totalVoter = makeTotalVoter();
     this.totalVotes = makeTotalVotes();
   }
 
-  public Long getTotalVotes(){
+  public Long getTotalVotes() {
     return this.totalVotes;
   }
 
-  public int getTotalVoter(){
+  public int getTotalVoter() {
     return this.totalVoter;
+  }
+
+  public String getTimestamp(){
+    return this.timestamp;
   }
 
   public int makeTotalVoter() {
@@ -31,7 +39,7 @@ public final class ImmutableSRVoter {
 
   public Long makeTotalVotes() {
     Long sum = 0L;
-    for(Map.Entry<String, Long> entry: this.voteMap.entrySet()){
+    for (Map.Entry<String, Long> entry : this.voteMap.entrySet()) {
       sum += entry.getValue();
     }
     return sum;
@@ -50,5 +58,13 @@ public final class ImmutableSRVoter {
     sb.append(this.srAddress).append("_").append(String.valueOf(this.totalVotes)).append("_")
         .append(String.valueOf(totalVoter));
     return sb.toString();
+  }
+
+  public String toString() {
+    SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Object.class, "totalVoter",
+        "totalVotes", "timestamp", "srAddress");
+    //转成json
+    String json = JSON.toJSONString(this, filter);
+    return json;
   }
 }

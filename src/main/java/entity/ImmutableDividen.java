@@ -14,30 +14,29 @@ public class ImmutableDividen {
     return amount;
   }
 
-  public boolean isSuccess() {
-    return isSuccess;
+  public boolean isTxConfirmed() {
+    return txConfirmed;
+  }
+
+  public void setTxConfirmed(boolean flag){
+    this.txConfirmed = flag;
+  }
+
+  public String getTxID(){
+    return txID;
   }
 
   private final String address;
   private final byte[] bAddress;
   private final Long amount;
 
-  private String transaction = "";
-  private boolean isSuccess = false;
+  private final String txID;
+  private boolean txConfirmed = false;
 
-  public ImmutableDividen(String address, Long amount) {
+  public ImmutableDividen(String address, Long amount, String txID) {
     this.address = address;
     this.bAddress = address.getBytes();
     this.amount = amount;
-  }
-
-  public void setTransaction(String transaction){
-    if(!isSuccess){
-      this.transaction = transaction;
-    }
-  }
-
-  public String getTransaction(){
-    return this.transaction;
+    this.txID = txID;
   }
 }
