@@ -18,16 +18,29 @@ public class SolidityNodeParamCheck implements IParameterValidator {
     try {
       Preconditions.checkArgument(IPCheck(input));
     } catch (IllegalArgumentException e) {
-      throw new ParameterException("invalid ip: " + input);
+      throw new ParameterException("invalid SolidityNode ip: " + input);
     }
   }
 
   public static boolean IPCheck(String str) {
-    if (str != null && !str.isEmpty()) {
-      String ip = str.substring(0, str.indexOf(":"));
-      String regex = "((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))";
-      return ip.matches(regex);
+    if (str == null || str.isEmpty()) {
+      return false;
     }
-    return false;
+
+    String regex = "((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))";
+    try {
+      String ip;
+      if (str.indexOf(":") > 0) {
+        ip = str.substring(0, str.indexOf(":"));
+
+        Preconditions
+            .checkArgument(Integer.valueOf(str.substring(str.indexOf(":") + 1, str.length())) > 0);
+      }else{
+        ip = str;
+      }
+      return ip.matches(regex);
+    } catch (Exception e) {
+      return false;
+    }
   }
 }

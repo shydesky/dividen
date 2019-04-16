@@ -56,7 +56,7 @@ public class HttpUtil {
       response = httpClient.execute(httppost);
       return response;
     } catch (Exception e) {
-      System.out.println("ss:" + e.getMessage());
+      System.out.println(e.getMessage());
       if (response != null) {
         try {
           EntityUtils.consume(response.getEntity());
