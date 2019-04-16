@@ -49,7 +49,7 @@ public class Configuration {
   public boolean ignore_allowance = false;
 
   @Parameter(names = "-debug", description = "Debug mode", hidden = true)
-  private boolean debug = false;
+  public boolean debug = false;
 
   @Parameter(names = "--help", help = true)
   private boolean help;

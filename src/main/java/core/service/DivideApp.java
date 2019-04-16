@@ -124,6 +124,9 @@ public class DivideApp {
 
     for (int index = 0; index < 4; index++) {
       this.srVoter[index] = getSRVoter(index);
+      if (this.srVoter[index].getTotalVoter() == 0) {
+        continue;
+      }
       this.trxPerShare = calcTrxPerShare(this.produceReward, this.srVoter[index].getTotalVotes());
       this.divideListMap.put(index, divide(trxPerShare, this.srVoter[index].getVoteMap()));
       try {
@@ -137,26 +140,27 @@ public class DivideApp {
     log.info("*******执行分红结果*******");
     for (int index = 0; index < 4; index++) {
       ArrayList<ImmutableDividen> alist = this.divideListMap.get(index);
-      List<ImmutableDividen> success = alist.stream().filter(ImmutableDividen::isTxConfirmed)
-          .collect(Collectors
-              .toList());
-
-      // 交易成功上链
-      for (ImmutableDividen divide : success) {
-        log.info(String.format("address:%s txID:%s amount:%d is confirmed", divide.getAddress(),
-            divide.getTxID(), divide.getAmount()));
-      }
-
-      // 交易未成功上链
-      List<ImmutableDividen> failure = alist.stream().filter(not(ImmutableDividen::isTxConfirmed))
-          .collect(Collectors.toList());
-      for (ImmutableDividen divide : failure) {
-        log.info(String.format("address:%s txID:%s amount:%d is not confirmed", divide.getAddress(),
-            divide.getTxID(), divide.getAmount()));
+      if (alist != null) {
+        // 成功上链的交易
+        List<ImmutableDividen> success = alist.stream().filter(ImmutableDividen::isTxConfirmed)
+            .collect(Collectors
+                .toList());
+        for (ImmutableDividen divide : success) {
+          log.info(String.format("address:%s txID:%s amount:%d is confirmed", divide.getAddress(),
+              divide.getTxID(), divide.getAmount()));
+        }
+        // 未成功上链的交易
+        List<ImmutableDividen> failure = alist.stream().filter(not(ImmutableDividen::isTxConfirmed))
+            .collect(Collectors.toList());
+        for (ImmutableDividen divide : failure) {
+          log.info(
+              String.format("address:%s txID:%s amount:%d is not confirmed", divide.getAddress(),
+                  divide.getTxID(), divide.getAmount()));
+        }
       }
     }
 
-    log.info("*******执行分红结束*******");
+    log.info("*******执行分红结束*******\n\n\n");
   }
 
   private void withdrawAllowance() throws WithdrawAllowanceException {

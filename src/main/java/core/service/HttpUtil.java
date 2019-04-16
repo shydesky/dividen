@@ -2,6 +2,7 @@ package core.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
+import common.utils.config.Configuration;
 import exceptions.ApiRequestException;
 import java.io.IOException;
 import java.net.URI;
@@ -16,9 +17,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 
 
 public class HttpUtil {
+
+  private static Logger log = Logger.getLogger(HttpUtil.class.getClass());
 
   public static HttpClient httpClient;
 
@@ -56,7 +60,6 @@ public class HttpUtil {
       response = httpClient.execute(httppost);
       return response;
     } catch (Exception e) {
-      System.out.println(e.getMessage());
       if (response != null) {
         try {
           EntityUtils.consume(response.getEntity());
@@ -114,7 +117,9 @@ public class HttpUtil {
           .setParameter("address", address)
           .setParameter("round", timestamp)
           .build();
-      System.out.println(uri.toString());
+      if (Configuration.getInstance().debug) {
+        log.info(uri.toString());
+      }
       httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,
           connectionTimeout);
       httpGet = new HttpGet(uri);
@@ -137,7 +142,6 @@ public class HttpUtil {
       HttpResponse response = createConnect(requestUrl, userBaseObj);
       return response;
     } catch (Exception e) {
-      System.out.println("s:+" + e.getMessage());
       return null;
     }
   }
@@ -242,19 +246,5 @@ public class HttpUtil {
     } catch (Exception e) {
       return null;
     }
-  }
-
-  public static String str2hex(String str) {
-    char[] chars = "0123456789ABCDEF".toCharArray();
-    StringBuilder sb = new StringBuilder("");
-    byte[] bs = str.getBytes();
-    int bit;
-    for (int i = 0; i < bs.length; i++) {
-      bit = (bs[i] & 0x0f0) >> 4;
-      sb.append(chars[bit]);
-      bit = bs[i] & 0x0f;
-      sb.append(chars[bit]);
-    }
-    return sb.toString().trim();
   }
 }
